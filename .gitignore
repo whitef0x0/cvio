@@ -1,4 +1,3 @@
-migrations
-hunspell
+migrations/versions
 __pycache__
 static/node_modules
