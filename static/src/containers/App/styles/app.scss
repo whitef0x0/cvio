@@ -1,0 +1,54 @@
+/* global styles */
+@import 'fonts/roboto';
+@import 'typography';
+@import 'links';
+
+:global(body) {
+  position: relative;
+  font-family: 'Roboto', sans-serif !important;
+  h1, h2, h3, h4 {
+    font-weight: 300;
+  }
+
+}
+
+
+.sidebar {
+	color: #6C696A
+}
+
+.sidebar ul > li {
+    font-size: 1.8rem;
+   	list-style-type: disc;
+}
+
+ul.problems, ul.strengths, ul.warnings {
+	padding-left: 20px;
+}
+
+ul.problems li {
+    /* Bullet color */
+    color: #C72848;
+}
+
+ul.warnings li {
+    /* Bullet color */
+    color: #FBA153;
+}
+
+ul.strengths li {
+    /* Bullet color */
+    color: #97C728;
+}
+
+.sidebar ul > li span {
+    /* Text color */
+    font-size: 15px;
+    color: #6C696A;
+    font-weight: 400;
+}
+
+.sidebar-title {
+	font-size: 1.6rem;
+	font-weight: 300;
+}

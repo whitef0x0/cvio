@@ -1,0 +1,4 @@
+migrations
+hunspell
+__pycache__
+static/node_modules

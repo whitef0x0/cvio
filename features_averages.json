@@ -1,0 +1,26 @@
+{
+	'bad': {
+		'active_verb_percentage': 23.809304703476485,
+		'animate_count': 0.7730061349693251,
+		'inanimate_count': 5.52760736196319,
+		'num': 163,
+		'proper_pronoun_count': 6.300613496932515,
+		'ratio_2nd_person_pronouns_to_1st_person_pronouns': 1.0166520595968451,
+		'relative_pronoun_count': 10.63803680981595,
+		'sentence_length': 21.569388832987986,
+		'spelling_mistakes': 0.8220858895705522,
+		'word_count': 283.39877300613495
+	},
+	'good': {
+		'active_verb_percentage': 27.483712121212122,
+		'animate_count': 1.2727272727272727,
+		'inanimate_count': 8.681818181818182,
+		'num': 44,
+		'proper_pronoun_count': 9.954545454545455,
+		'ratio_2nd_person_pronouns_to_1st_person_pronouns': 0.8003787878787879,
+		'relative_pronoun_count': 15.909090909090908,
+		'sentence_length': 20.9671438532408,
+		'spelling_mistakes': 0.5454545454545454,
+		'word_count': 328.90909090909093
+	}
+}
