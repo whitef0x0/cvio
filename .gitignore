@@ -1,3 +1,4 @@
+*.log
 ENV
 migrations/versions
 __pycache__
