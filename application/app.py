@@ -7,7 +7,7 @@ from sqlalchemy.exc import IntegrityError
 from .utils.auth import generate_token, requires_auth, verify_token
 
 from .ml_service import score
-#from .ml_service import get_model
+from .ml_service import get_model
 
 @app.route('/', methods=['GET'])
 def index():
@@ -95,7 +95,7 @@ def get_coverletter_stats():
         print("Coverletter successfully saved")
 
     '''
-    outcome, dist = get_model.classify(spacy_doc)
+    outcome, dist = get_model.classify(paragraphs)
     probability_scores = []
     for label in dist.samples():
         probability_scores.append({
@@ -104,7 +104,8 @@ def get_coverletter_stats():
         })
     print("CV has been classified")
     '''
-    returnObj = {
+
+    cvStats = {
         #'outcome': outcome,
         #'confidence': probability_scores,
         'relevancy_score': score.relevancy_score(spacy_doc, paragraphs),
@@ -144,4 +145,34 @@ def get_coverletter_stats():
         'ratio_2nd_person_pronouns_to_1st_person_pronouns': score.ratio_2nd_person_pronouns_to_1st_person_pronouns(spacy_doc)
     }
 
-    return jsonify(results=returnObj)
+
+    if cvStats['active_verb_percentage'] >= 0.7 and cvStats['active_verb_percentage'] <= 0.875:
+        activeVerbScore = (cvStats['active_verb_percentage'] - 0.7)/0.175
+    elif cvStats['active_verb_percentage']> 0.875:
+        activeVerbScore = 1
+    else:
+        activeVerbScore = 0
+
+    if cvStats['cliches_score'] > 0 and cvStats['cliches_score'] <= 4:
+        clicheScore = 1 - (cvStats['cliches_score'] / 4)
+    elif cvStats['cliches_score'] == 0:
+        clicheScore = 1
+    else:
+        clicheScore = 0
+
+    if cvStats['acronym_entity_percentage'] > 0.05 and cvStats['acronym_entity_percentage'] <= 0.15:
+        acronymEntityScore = 1 - ((cvStats['acronym_entity_percentage'] - 0.05)/ 0.10)
+    elif cvStats['acronym_entity_percentage'] <= 0.05:
+        acronymEntityScore = 1
+    else:
+        acronymEntityScore = 0
+
+    positivityScore = cvStats['positivity_score']
+
+
+    basicScores = int(cvStats['has_greeting']) * 0.1 + int(cvStats['has_signature']) * 0.1 + int(cvStats['has_contact_details']) * 0.1
+    advancedScores = 0.10 * cvStats['relevancy_score'] + 0.15 * activeVerbScore + 0.15 * positivityScore + 0.125 * clicheScore + 0.125 * acronymEntityScore
+    overallScore = basicScores + advancedScores
+
+    cvStats['score'] = round(overallScore, 2)
+    return jsonify(results=cvStats)

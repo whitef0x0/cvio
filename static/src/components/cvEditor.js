@@ -269,13 +269,14 @@ class cvEditor extends React.Component {
                   onChange={this.onChange}
                   placeholder="Write your coverletter here..."
                   ref="editor"
+                  spellCheck={true}
                 />
               </div>
               {this.props.stats &&
               <div style={styles.sidebar} className="col-md-3 sidebar">
 
-                {this.props.stats.outcome &&
-                  <h2>Outcome: {this.props.stats.outcome} </h2>
+                {this.props.stats.score &&
+                  <h2>Score: {this.props.stats.score * 100} </h2>
                 }
                 <h4>Strengths</h4>
                 <ul className='strengths'>
@@ -323,7 +324,7 @@ class cvEditor extends React.Component {
 
                 <h4>Warnings</h4>
                 <ul className='warnings'>
-                  {this.props.stats.adjective_percentage >= 0.10 && this.props.stats.adjective_percentage <= 0.15 &&
+                  {this.props.stats.adjective_percentage > 0.09 && this.props.stats.adjective_percentage < 0.15 &&
                     <li>
                       <span>
                         Could use less adjectives
@@ -473,7 +474,7 @@ class cvEditor extends React.Component {
                     </li>
                   }
 
-                  { this.props.stats.adjective_percentage >= 0.10 &&
+                  { this.props.stats.adjective_percentage >= 0.15 &&
                     <li>
                       <span>
                         Has too many adjectives

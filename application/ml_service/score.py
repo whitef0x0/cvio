@@ -208,7 +208,7 @@ def spelling_mistake_score(paragraphs):
 						spellingMistakes.append({
 							'word': token.text
 						})
-	return len(spellingMistakes), spellingMistakes 
+	return len(spellingMistakes), spellingMistakes
 '''
 def sentence_length_score(docs):
 	sentencesWithCorrectLengths = 0
