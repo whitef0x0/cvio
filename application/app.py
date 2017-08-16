@@ -84,7 +84,7 @@ def get_coverletter_stats():
     spacy_doc, paragraphs, entire_doc = score.setup_cv_text(incoming['coverletter'])
 
     if not paragraphs:
-        return jsonify(error="No paragraphs found in text"), 406
+        return jsonify(message="No paragraphs found in text"), 406
 
     db.session.add(cv)
     try:
@@ -104,7 +104,7 @@ def get_coverletter_stats():
         })
     print("CV has been classified")
     '''
-    returnObj = {    
+    returnObj = {
         #'outcome': outcome,
         #'confidence': probability_scores,
         'relevancy_score': score.relevancy_score(spacy_doc, paragraphs),
@@ -122,9 +122,9 @@ def get_coverletter_stats():
         'verb_percentage': score.verb_percentage(spacy_doc),
 
         'contains_offensive_words': list(score.contains_offensive_words(paragraphs))[0],
-        'spelling_mistakes_score': list(score.spelling_mistake_score(paragraphs))[0],
-        'spelling_mistakes_list': list(score.spelling_mistake_score(paragraphs))[1],
-        
+        #'spelling_mistakes_score': list(score.spelling_mistake_score(paragraphs))[0],
+        #'spelling_mistakes_list': list(score.spelling_mistake_score(paragraphs))[1],
+
         'lexical_illusions': list(score.lexical_illusions(paragraphs))[0],
         'lexical_illusions_list': list(score.lexical_illusions(paragraphs))[1],
 

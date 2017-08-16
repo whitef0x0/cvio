@@ -15,16 +15,16 @@ from . import token_utils
 from . import sentence_utils
 from . import extract_utils
 
-import hunspell
+#import hunspell
 import proselint
 
 print("Loaded CoverLetter Heuristics\n")
 
 dir = os.path.dirname(os.path.abspath(__file__))
-hunspell_dic_path = os.path.join(dir, '../../hunspell/en_US-large.dic')
-hunspell_aff_path = os.path.join(dir, '../../hunspell/en_US-large.aff')
+#hunspell_dic_path = os.path.join(dir, '../../hunspell/en_US-large.dic')
+#hunspell_aff_path = os.path.join(dir, '../../hunspell/en_US-large.aff')
 
-spellchecker = hunspell.HunSpell(hunspell_dic_path, hunspell_aff_path)
+#spellchecker = hunspell.HunSpell(hunspell_dic_path, hunspell_aff_path)
 
 def uniquify_list(seq, idfun=None): 
    # order preserving
@@ -145,8 +145,9 @@ def ratio_2nd_person_pronouns_to_1st_person_pronouns(paragraphs):
 def too_wordy_score(paragraphs):
 	f = open(os.path.join(dir, './wordy_words.txt'), "r")
 	wordy_words = f.read().splitlines()
+	escaped_wordy_words = [re.escape(word) for word in wordy_words]
 
-	wordy_regex = re.compile('\\b(' + '|'.join(wordy_words) + ')\\b', re.IGNORECASE)
+	wordy_regex = re.compile('\\b(' + '|'.join(escaped_wordy_words) + ')\\b', re.IGNORECASE)
 	f.close()
 
 	results = []
@@ -168,8 +169,9 @@ def too_wordy_score(paragraphs):
 def cliches_score(paragraphs):
 	f = open(os.path.join(dir, './cliches.txt'), "r")
 	cliches = f.read().splitlines()
+	escaped_cliches = [re.escape(cliche) for cliche in cliches]
 
-	cliche_regex = re.compile('\\b(' + '|'.join(cliches) + ')\\b', re.IGNORECASE)
+	cliche_regex = re.compile('\\b(' + '|'.join(escaped_cliches) + ')\\b', re.IGNORECASE)
 	f.close()
 
 	results = []
@@ -185,7 +187,7 @@ def cliches_score(paragraphs):
 			for match in cliche_matches:
 				results.append(match.group(0))
 			sentence_index = sentence_index + 1
-			
+
 		paragraph_index = paragraph_index + 1
 	return (len(results), results)
 
@@ -193,7 +195,7 @@ def repeated_phrases_score(docs):
 	span_list = list(textacy.extract.ngrams(docs, 3, filter_stops=False, filter_nums=True, min_freq=2))
 	repeated_phrases = uniquify_list([span.text for span in span_list])
 	return (len(repeated_phrases), repeated_phrases)
-
+'''
 def spelling_mistake_score(paragraphs):
 
 	spellingMistakes = []
@@ -207,7 +209,7 @@ def spelling_mistake_score(paragraphs):
 							'word': token.text
 						})
 	return len(spellingMistakes), spellingMistakes 
-
+'''
 def sentence_length_score(docs):
 	sentencesWithCorrectLengths = 0
 	numSentences = 0
@@ -352,7 +354,7 @@ def action_word_percentage(docs):
 		return 0
 
 def contains_offensive_words(docs):
-	f = open(os.path.join(dir, './wordy_words.txt'), "r")
+	f = open(os.path.join(dir, './offensive_words.txt'), "r")
 	offensive_words = f.read().splitlines()
 
 	totalTokens = 0

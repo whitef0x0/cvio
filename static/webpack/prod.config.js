@@ -13,7 +13,7 @@ module.exports = {
     module: {
         loaders: [{
             test: /\.scss$/,
-            loader: 'style!css!postcss-loader!sass',
+            loader: 'style-loader!css-loader!postcss-loader!sass-loader',
         }],
     },
 
@@ -25,8 +25,6 @@ module.exports = {
             __DEVELOPMENT__: false,
         }),
         new ExtractTextPlugin('bundle.css'),
-        new webpack.optimize.DedupePlugin(),
-        new webpack.optimize.OccurenceOrderPlugin(),
         new webpack.optimize.UglifyJsPlugin({
             compress: {
                 warnings: false,

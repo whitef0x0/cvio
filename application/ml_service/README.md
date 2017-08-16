@@ -8,7 +8,7 @@ CoverletterIO is a "Cover Letter Style Checker" libary built in python that uses
 ## Prerequisites
 To install please run
 ```
-pip3 install nltk 
+pip3 install nltk
 pip3 install spacy
 pip3 install textacy
 ```
@@ -16,6 +16,7 @@ pip3 install textacy
 And run this in your python3 shell
 ```
 python3
+import nltk
 nltk.download('vader_lexicon')
 nltk.download('punkt')
 nltk.download('averaged_perceptron_tagger')

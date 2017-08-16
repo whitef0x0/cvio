@@ -1,3 +1,4 @@
+ENV
 migrations/versions
 __pycache__
 static/node_modules

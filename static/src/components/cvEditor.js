@@ -16,13 +16,13 @@ class PopoverComponent extends React.Component {
     };
   }
   togglePopoverEnter = () => {
-    this.setState({ 
+    this.setState({
       isOpen: true,
       hover: true
     })
   }
   togglePopoverLeave = () => {
-    this.setState({ 
+    this.setState({
       isOpen: false,
       hover: false
     })
@@ -88,7 +88,6 @@ class NeutralComponent extends PopoverComponent {
     );
   }
 };
-
 
 var getRepeatedStrategy = (repeated_phrases_list) => {
 
@@ -156,28 +155,30 @@ var getWordyStrategy = (too_wordy_list) => {
 const getDecorators = (coverletter_state) => {
   var decorators = []
 
-  if(coverletter_state.stats && coverletter_state.stats.repeated_phrases_list.length > 0){
-    var repeatedStrategy = getRepeatedStrategy(coverletter_state.stats.repeated_phrases_list);
-    decorators.push({
-      strategy: repeatedStrategy,
-      component: NeutralComponent
-    });
-  }
+  if(coverletter_state.stats){
+    if(coverletter_state.stats.repeated_phrases_list && coverletter_state.stats.repeated_phrases_list.length > 0){
+      var repeatedStrategy = getRepeatedStrategy(coverletter_state.stats.repeated_phrases_list);
+      decorators.push({
+        strategy: repeatedStrategy,
+        component: NeutralComponent
+      });
+    }
 
-  if(coverletter_state.stats && coverletter_state.stats.cliches_list.length > 0){
-    var clicheStrategy = getClicheStrategy(coverletter_state.stats.cliches_list);
-    decorators.push({
-        strategy: clicheStrategy,
-        component: ClicheComponent
-    });
-  }
-  
-  if(coverletter_state.stats && coverletter_state.stats.too_wordy_list.length > 0){
-    var wordyStrategy = getWordyStrategy(coverletter_state.stats.too_wordy_list)
-    decorators.push({
-      strategy: wordyStrategy,
-      component: WordyComponent
-    });
+    if(coverletter_state.stats.cliches_list && coverletter_state.stats.cliches_list.length > 0){
+      var clicheStrategy = getClicheStrategy(coverletter_state.stats.cliches_list);
+      decorators.push({
+          strategy: clicheStrategy,
+          component: ClicheComponent
+      });
+    }
+
+    if(coverletter_state.stats.too_wordy_list && coverletter_state.stats.too_wordy_list.length > 0){
+      var wordyStrategy = getWordyStrategy(coverletter_state.stats.too_wordy_list)
+      decorators.push({
+        strategy: wordyStrategy,
+        component: WordyComponent
+      });
+    }
   }
 
   return decorators;
@@ -185,6 +186,7 @@ const getDecorators = (coverletter_state) => {
 
 function mapStateToProps(state) {
     return {
+      error: state.coverletter.error,
       stats: state.coverletter.stats,
       text: state.coverletter.text,
       title: state.coverletter.title,
@@ -197,7 +199,7 @@ function mapDispatchToProps(dispatch) {
 }
 
 @connect(mapStateToProps, mapDispatchToProps)
-class cvEditor extends React.Component { 
+class cvEditor extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -205,6 +207,7 @@ class cvEditor extends React.Component {
           text: '',
           title: '',
           stats: null,
+          error: null,
           old_cliches_list: null
         }
     }
@@ -214,6 +217,7 @@ class cvEditor extends React.Component {
     }
 
     onChange = (editorState) => {
+
       this.setState({
         editorState: editorState,
       });
@@ -224,14 +228,19 @@ class cvEditor extends React.Component {
         this.props.setCoverLetterText(nextText);
 
         var that = this;
-        this.props.fetchCoverLetterStats(nextText, () => {
+        this.props.fetchCoverLetterStats(nextText, (error) => {
 
-          const updatedDecorators = new CompositeDecorator(that.props.decorators);
-          if(that.state.old_cliches_list && that.props.stats.cliches_list && that.state.old_cliches_list.length !== that.props.stats.cliches_list.length || (that.props.stats.cliches_list && !that.state.old_cliches_list) ){
-            that.setState({
-              old_cliches_list: that.props.stats.cliches_list,
-              editorState:  EditorState.set(that.state.editorState, {decorator: updatedDecorators})
-            });
+          if(error) {
+            console.log(this.props.error);
+            this.props.clearCoverLetterStats();
+          } else {
+            const updatedDecorators = new CompositeDecorator(that.props.decorators);
+            if(that.state.old_cliches_list && that.props.stats.cliches_list && that.state.old_cliches_list.length !== that.props.stats.cliches_list.length || (that.props.stats.cliches_list && !that.state.old_cliches_list) ){
+              that.setState({
+                old_cliches_list: that.props.stats.cliches_list,
+                editorState:  EditorState.set(that.state.editorState, {decorator: updatedDecorators})
+              });
+            }
           }
         });
       } else {
@@ -244,28 +253,28 @@ class cvEditor extends React.Component {
     render() {
         return (
             <div style={styles.root} className="row">
-              {this.props.stats && 
+              {this.props.stats &&
               <div className="col-xs-12 red">
                 <span>Did you get an interview with this cover letter?</span>
                 <div className="btn">Yes</div>
                 <div className="btn">No</div>
               </div>
               }
-
-              <div className="col-md-9 editor-wrapper">
+              <div className="col-md-9">
                 <input className="titleInput" type="text" placeholder="Title of your cover letter"/>
+              </div>
+              <div className="col-md-9 editor-wrapper">
                 <Editor
                   editorState={this.state.editorState}
                   onChange={this.onChange}
                   placeholder="Write your coverletter here..."
-                  spellCheck={{true}}
                   ref="editor"
                 />
               </div>
               {this.props.stats &&
               <div style={styles.sidebar} className="col-md-3 sidebar">
 
-                {this.props.stats.outcome && 
+                {this.props.stats.outcome &&
                   <h2>Outcome: {this.props.stats.outcome} </h2>
                 }
                 <h4>Strengths</h4>
@@ -304,11 +313,11 @@ class cvEditor extends React.Component {
 
                   {this.props.stats.adjective_percentage < 0.09 &&
                     <li>
-                      <span>  
+                      <span>
                         Appropriate use of adjectives
                       </span>
                     </li>
-                  }     
+                  }
                 </ul>
                 <br/>
 
@@ -316,7 +325,7 @@ class cvEditor extends React.Component {
                 <ul className='warnings'>
                   {this.props.stats.adjective_percentage >= 0.10 && this.props.stats.adjective_percentage <= 0.15 &&
                     <li>
-                      <span>  
+                      <span>
                         Could use less adjectives
                       </span>
                     </li>
@@ -462,23 +471,41 @@ class cvEditor extends React.Component {
                         Contains too many overly-wordy phrases/words
                       </span>
                     </li>
-                  }   
+                  }
 
                   { this.props.stats.adjective_percentage >= 0.10 &&
                     <li>
-                      <span>  
+                      <span>
                         Has too many adjectives
                       </span>
                     </li>
-                  }   
+                  }
                 </ul>
               </div>
               }
-              {!this.props.stats &&
+              {!this.props.stats && !this.props.error &&
               <div style={styles.sidebarEmpty} className="col-md-3 sidebar">
                 <h4 style={styles.sidebarHelpText}>CoverletterIO QuickStart</h4>
                 <p>
                   Paste in your existing coverletter or simply just start writing to begin.
+                </p>
+              </div>
+              }
+
+              {!this.props.stats && this.props.error == 'serverError' &&
+              <div style={styles.sidebarEmpty} className="col-md-3 sidebar">
+                <h4 style={styles.sidebarHelpText}>Can't Connect to Server</h4>
+                <p>
+                  <strong>Uh oh!</strong> We are having problems connecting to our server. Until we can reconnect we won't be able to help you improve your listing.
+                </p>
+              </div>
+              }
+
+              {!this.props.stats && this.props.error == 'needMoreText' &&
+              <div style={styles.sidebarEmpty} className="col-md-3 sidebar">
+                <h4 style={styles.sidebarHelpText}>Keep Typing!</h4>
+                <p>
+                  CoverletterIO can help improve your coverletter as soon as you have at least two paragraphs written.
                 </p>
               </div>
               }

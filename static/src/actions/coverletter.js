@@ -1,6 +1,7 @@
 import {
     FETCH_COVERLETTER_STATS_REQUEST,
     RECEIVE_COVERLETTER_STATS,
+    RECEIVE_COVERLETTER_STATS_ERROR,
     SET_COVERLETTER_TEXT,
     CLEAR_COVERLETTER_TEXT,
     CLEAR_COVERLETTER_STATS
@@ -8,6 +9,15 @@ import {
 
 import { parseJSON } from '../utils/misc';
 import { get_coverletter_stats } from '../utils/http_functions';
+
+export function receiveCoverLetterStatsError(error) {
+    return {
+        type: RECEIVE_COVERLETTER_STATS_ERROR,
+        payload: {
+            error,
+        },
+    };
+}
 
 export function receiveCoverLetterStats(stats) {
     return {
@@ -74,14 +84,17 @@ export function fetchCoverLetterStats(coverletter, cb) {
         get_coverletter_stats(coverletter)
             .then(parseJSON)
             .then(response => {
+                console.log(response.results);
                 dispatch(receiveCoverLetterStats(response.results));
                 cb(null)
             })
             .catch(error => {
-                if (error.status === 401) {
-                    console.error(error.status);
-                    cb(err, null);
+                var errorType = 'serverError';
+                if(error.response.status === 406 && error.response.data.message === "No paragraphs found in text"){
+                  errorType = 'needMoreText';
                 }
+                dispatch(receiveCoverLetterStatsError(errorType));
+                cb(error);
             });
     };
 }

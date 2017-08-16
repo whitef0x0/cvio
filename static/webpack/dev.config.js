@@ -15,7 +15,7 @@ module.exports = {
     module: {
         loaders: [{
             test: /\.scss$/,
-            loader: 'style!css?localIdentName=[path][name]--[local]!postcss-loader!sass',
+            loader: 'style-loader!css-loader?localIdentName=[path][name]--[local]!postcss-loader!sass-loader',
         }],
     },
 
@@ -27,7 +27,6 @@ module.exports = {
             __DEVELOPMENT__: true,
         }),
         new ExtractTextPlugin('bundle.css'),
-        new webpack.optimize.OccurenceOrderPlugin(),
         new webpack.HotModuleReplacementPlugin(),
         new webpack.NoErrorsPlugin(),
         new webpack.ProvidePlugin({
