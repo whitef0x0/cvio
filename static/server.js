@@ -27,7 +27,7 @@ app.use(require('morgan')('short'));
 }());
 
 app.all(/^\/api\/(.*)/, (req, res) => {
-    proxy.web(req, res, { target: 'http://localhost:5000' });
+    proxy.web(req, res, { target: 'http://localhost:8000' });
 });
 
 app.get(/.*/, (req, res) => {
@@ -36,7 +36,7 @@ app.get(/.*/, (req, res) => {
 
 
 const server = http.createServer(app);
-server.listen(process.env.PORT || 3000, () => {
+server.listen(process.env.PORT || 8000, () => {
     const address = server.address();
     console.log('Listening on: %j', address);
     console.log(' -> that probably means: http://localhost:%d', address.port);

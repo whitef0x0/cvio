@@ -7,7 +7,7 @@ from sqlalchemy.exc import IntegrityError
 from .utils.auth import generate_token, requires_auth, verify_token
 
 from .ml_service import score
-from .ml_service import get_model
+#from .ml_service import get_model
 
 @app.route('/', methods=['GET'])
 def index():
@@ -86,6 +86,7 @@ def get_coverletter_stats():
     if not paragraphs:
         return jsonify(message="No paragraphs found in text"), 406
 
+    '''
     db.session.add(cv)
     try:
         db.session.commit()
@@ -93,7 +94,7 @@ def get_coverletter_stats():
         print("Coverletter with that text already exists")
     else:
         print("Coverletter successfully saved")
-
+    '''
     '''
     outcome, dist = get_model.classify(paragraphs)
     probability_scores = []
@@ -123,8 +124,8 @@ def get_coverletter_stats():
         'verb_percentage': score.verb_percentage(spacy_doc),
 
         'contains_offensive_words': list(score.contains_offensive_words(paragraphs))[0],
-        #'spelling_mistakes_score': list(score.spelling_mistake_score(paragraphs))[0],
-        #'spelling_mistakes_list': list(score.spelling_mistake_score(paragraphs))[1],
+        'spelling_mistakes_score': list(score.spelling_mistake_score(paragraphs))[0],
+        'spelling_mistakes_list': list(score.spelling_mistake_score(paragraphs))[1],
 
         'lexical_illusions': list(score.lexical_illusions(paragraphs))[0],
         'lexical_illusions_list': list(score.lexical_illusions(paragraphs))[1],

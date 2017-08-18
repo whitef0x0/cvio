@@ -18,7 +18,10 @@ class GunicornServer(Command):
         return options
 
     def run(self, *args, **kwargs):
-
+        from gunicorn.app.wsgiapp import WSGIApplication
+        app = WSGIApplication()
+        app.app_uri = 'manage:app'
+        
         #Migrate Database
         if not database_exists(db.engine.url): 
             create_database(db.engine.url)
@@ -26,8 +29,4 @@ class GunicornServer(Command):
         upgrade()
         migrate()
 
-        from gunicorn.app.wsgiapp import WSGIApplication
-
-        app = WSGIApplication()
-        app.app_uri = 'manage:app'
         return app.run()

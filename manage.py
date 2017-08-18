@@ -1,4 +1,4 @@
-from flask_script import Manager
+from flask_script import Manager, Server
 from flask_migrate import Migrate, MigrateCommand, migrate, upgrade
 from sqlalchemy_utils import database_exists, create_database
 
@@ -7,6 +7,12 @@ from gunicorn_script import GunicornServer
 
 _migrate = Migrate(app, db)
 manager = Manager(app)
+
+manager.add_command("runprodserver", Server(
+        use_debugger = False,
+            use_reloader = False,
+                host = '0.0.0.0',
+                port = 5000) )
 
 # migrations
 manager.add_command('db', MigrateCommand)

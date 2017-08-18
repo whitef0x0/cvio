@@ -1,5 +1,5 @@
 *.log
 ENV
-migrations/versions
+migrations/versions/
 __pycache__
 static/node_modules
